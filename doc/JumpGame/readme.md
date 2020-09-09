@@ -55,11 +55,43 @@ return steps;
 
 空间复杂度：O(1)。
 
+### 方法二：正向查找可到达的最大位置
+正向查找，在当前跳跃范围内遍历，找到下次跳跃能到达的最远距离，就是这次跳跃的最佳选择
 
+如下图，开始的位置是 2，可跳的范围是橙色的。如果选择跳到3的话。下次就可以跳3格，所以最远距离是4，如果选择1的话，下次可以跳1格，最远距离是3，因为 选择3 可以跳的更远，所以跳到 3的 的位置
 
+![Tree](../../res/JumpGame/jump2.png)
 
+如下图，然后现在的位置就是 3 了，能跳的范围是橙色的，然后因为 4 可以跳的更远，所以下次跳到 4 的位置。
 
-  
+![Tree](../../res/JumpGame/jump1.png)
+
+在具体的实现中，我们维护当前能够到达的最大下标位置，记为边界。我们从左到右遍历数组，到达边界时，更新边界并将跳跃次数增加 1。
+
+```
+int nums[] = {2,3,1,2,4,2,1};
+int currMaxIdx = 0;   // 当前跳跃范围最远坐标
+int nextMaxIdx = 0;   // 下一个跳跃范围最远坐标
+int steps = 0;        // 步数
+int target = sizeof(nums)/sizeof(nums[0]) - 1;
+for (int i = 0; i <= currMaxIdx; ++i) {   // 在当前跳跃范围内遍历，获得下次跳跃能到达的最远距离
+    nextMaxIdx = max(nextMaxIdx, i + nums[i]);
+    if (nextMaxIdx >= target){
+        return steps + 1;     // 提前结束
+    }
+    if (i == currMaxIdx) {    // 更新跳跃范围与跳跃次数
+        currMaxIdx = nextMaxIdx;
+        ++steps;
+    }
+}
+return steps;
+```
+
+#### 复杂度分析
+时间复杂度：O(n)
+
+空间复杂度：O(1)
+
    ---------------------------------
       
       
