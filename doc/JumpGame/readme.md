@@ -35,19 +35,21 @@
 以此类推，直到找到数组的开始位置结束。
 
 ```
-int nums[] = {2,3,1,2,4,2,1};
-int position = sizeof(nums)/sizeof(nums[0]) - 1;
-int steps = 0;
-while (position > 0) {
-    for (int i = 0; i < position; i++) {
-        if (i + nums[i] >= position) {
-            position = i;
-            steps++;
-            break;
+int minSteps1(int *nums,int size)
+{
+    int position = size - 1;
+    int steps = 0;
+    while (position > 0) {
+        for (int i = 0; i < position; i++) {
+            if (i + nums[i] >= position) {
+                position = i;
+                steps++;
+                break;
+            }
         }
     }
+    return steps;
 }
-return steps;
 ```
 
 #### 复杂度分析
@@ -64,27 +66,29 @@ return steps;
 
 如下图，然后现在的位置就是 3 了，能跳的范围是橙色的，然后因为 4 可以跳的更远，所以下次跳到 4 的位置。
 
-![Tree](../../res/JumpGame/jump1.png)
+![Tree](../../res/JumpGame/jump3.png)
 
 在具体的实现中，我们维护当前能够到达的最大下标位置，记为边界。我们从左到右遍历数组，到达边界时，更新边界并将跳跃次数增加 1。
 
 ```
-int nums[] = {2,3,1,2,4,2,1};
-int currMaxIdx = 0;   // 当前跳跃范围最远坐标
-int nextMaxIdx = 0;   // 下一个跳跃范围最远坐标
-int steps = 0;        // 步数
-int target = sizeof(nums)/sizeof(nums[0]) - 1;
-for (int i = 0; i <= currMaxIdx; ++i) {   // 在当前跳跃范围内遍历，获得下次跳跃能到达的最远距离
-    nextMaxIdx = max(nextMaxIdx, i + nums[i]);
-    if (nextMaxIdx >= target){
-        return steps + 1;     // 提前结束
+int minSteps2(int *nums,int size)
+{
+    int currMaxIdx = 0;   // 当前跳跃范围最远坐标
+    int nextMaxIdx = 0;   // 下一个跳跃范围最远坐标
+    int steps = 0;        // 步数
+    int target = size - 1;
+    for (int i = 0; i <= currMaxIdx; ++i) {   // 在当前跳跃范围内遍历，获得下次跳跃能到达的最远距离
+        nextMaxIdx = max(nextMaxIdx, i + nums[i]);
+        if (nextMaxIdx >= target){
+            return steps + 1;     // 提前结束
+        }
+        if (i == currMaxIdx) {    // 更新跳跃范围与跳跃次数
+            currMaxIdx = nextMaxIdx;
+            ++steps;
+        }
     }
-    if (i == currMaxIdx) {    // 更新跳跃范围与跳跃次数
-        currMaxIdx = nextMaxIdx;
-        ++steps;
-    }
+    return steps;
 }
-return steps;
 ```
 
 #### 复杂度分析
